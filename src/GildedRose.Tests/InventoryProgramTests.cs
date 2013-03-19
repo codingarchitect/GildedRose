@@ -76,21 +76,24 @@ namespace GildedRose.Tests
             Assert.IsNull(item);
         }
 
+        private Item UpdateQualityReturnItem(IList<Item> items, string itemName)
+        {
+            var inventoryProgram = new Program(items);
+            inventoryProgram.UpdateQuality();
+            return inventoryProgram.FindItemByName(itemName);
+        }
+
         [Test]
         public void TestThatSellInDaysIsReducedWhenItemNameIsNotSulfuras()
         {
-            var inventoryProgram = new Program(new List<Item> { Item1 });
-            inventoryProgram.UpdateQuality();
-            var item1 = inventoryProgram.FindItemByName("Item1");
-            Assert.AreEqual(0, item1.SellIn, "SellIn days was not reduced.");
+            var item = UpdateQualityReturnItem(new List<Item> { Item1 }, Item1.Name);
+            Assert.AreEqual(0, item.SellIn, "SellIn days was not reduced.");
         }
 
         [Test]
         public void TestThatSellInDaysIsNotReducedForSulfuras()
         {
-            var inventoryProgram = new Program(new List<Item> { Sulfuras });
-            inventoryProgram.UpdateQuality();
-            var item = inventoryProgram.FindItemByName(Sulfuras.Name);
+            var item = UpdateQualityReturnItem(new List<Item> { Sulfuras }, Sulfuras.Name);
             Assert.AreEqual(1, item.SellIn, "SellIn days was reduced for 'Sulfuras, Hand of Ragnaros'.");
         }
     }
