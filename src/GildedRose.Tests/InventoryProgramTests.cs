@@ -47,14 +47,23 @@ namespace GildedRose.Tests
     [TestFixture]
     public class InventoryProgramTests
     {
-        private readonly Item Item1 = new Item { Name = "Item1", SellIn = 1 };
-        private readonly Item Item2 = new Item { Name = "Item2", SellIn = 1 };
-        private readonly Item Sulfuras = new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 1 };
+        private Item CreateItem1()
+        {
+            return new Item { Name = "Item1", SellIn = 1 };
+        }
+        private Item CreateItem2()
+        {
+            return new Item { Name = "Item2", SellIn = 1 };
+        }
+        private Item CreateSulfuras()
+        {
+            return new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 1, Quality = 1 };
+        }
 
         [Test]
         public void TestWeCanFindItemByName()
         {
-            var inventoryProgram = new Program(new List<Item> { Item1, Item2 });
+            var inventoryProgram = new Program(new List<Item> { CreateItem1(), CreateItem2() });
             var item = inventoryProgram.FindItemByName("Item2");
             Assert.IsNotNull(item);
             Assert.AreEqual("Item2", item.Name);
@@ -63,7 +72,7 @@ namespace GildedRose.Tests
         [Test]
         public void TestWeCanFindItemByNameReturnsNullWhenThereIsNoMatch()
         {
-            var inventoryProgram = new Program(new List<Item> { Item1, Item2 });
+            var inventoryProgram = new Program(new List<Item> { CreateItem1(), CreateItem2() });
             var item = inventoryProgram.FindItemByName("NonExistentItem");
             Assert.IsNull(item);            
         }
@@ -84,17 +93,31 @@ namespace GildedRose.Tests
         }
 
         [Test]
-        public void TestThatSellInDaysIsReducedWhenItemNameIsNotSulfuras()
+        public void TestThatSellInDaysIsLoweredWhenItemNameIsNotSulfuras()
         {
-            var item = UpdateQualityReturnItem(new List<Item> { Item1 }, Item1.Name);
-            Assert.AreEqual(0, item.SellIn, "SellIn days was not reduced.");
+            var item = UpdateQualityReturnItem(new List<Item> { CreateItem1() }, "Item1");
+            Assert.AreEqual(0, item.SellIn, "SellIn days was not lowered.");
         }
 
         [Test]
-        public void TestThatSellInDaysIsNotReducedForSulfuras()
+        public void TestThatSellInDaysIsNotLoweredForSulfuras()
         {
-            var item = UpdateQualityReturnItem(new List<Item> { Sulfuras }, Sulfuras.Name);
-            Assert.AreEqual(1, item.SellIn, "SellIn days was reduced for 'Sulfuras, Hand of Ragnaros'.");
+            var item = UpdateQualityReturnItem(new List<Item> { CreateSulfuras() }, "Sulfuras, Hand of Ragnaros");
+            Assert.AreEqual(1, item.SellIn, "SellIn days was lowered for 'Sulfuras, Hand of Ragnaros'.");
+        }
+
+        [Test]
+        public void TestThatQualityIsLoweredForNormalCase()
+        {
+            var item = UpdateQualityReturnItem(new List<Item> { CreateItem1() }, "Item1");
+            Assert.AreEqual(0, item.Quality, "Quality was not lowered for normal case.");
+        }
+
+        [Test]
+        public void TestThatQualityIsNotLoweredForSulfuras()
+        {
+            var item = UpdateQualityReturnItem(new List<Item> { CreateSulfuras() }, "Sulfuras, Hand of Ragnaros");
+            Assert.AreEqual(1, item.Quality, "Quality was lowered for 'Sulfuras, Hand of Ragnaros'.");
         }
     }
 }
