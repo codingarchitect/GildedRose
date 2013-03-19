@@ -157,5 +157,14 @@ namespace GildedRose.Tests
             var item = UpdateQualityReturnItem(new List<Item> { CreateBrie() }, BrieItemName);
             Assert.AreEqual(2, item.Quality, "Quality was not increased for Brie.");
         }
+
+        // - The Quality of an item is never more than 50
+        public void TestThatQualityOfAnItemIsNeverMoreThan50()
+        {
+            var item = CreateBrie();
+            item.Quality = 50;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BrieItemName);
+            Assert.AreEqual(50, item.Quality, "Quality of an item increased beyond 50.");
+        }
     }
 }
