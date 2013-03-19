@@ -247,5 +247,40 @@ namespace GildedRose.Tests
             item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
             Assert.AreEqual(0, item.Quality, "Quality of a backstage pass did not drop to 0 after the concert.");
         }
+
+        // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches; 
+        // Corner case where quality is 47 all the 3 if conditions with asterisks are required even though the if condition is same
+        //if (Items[i].Quality < 50) ************************************
+        //{
+        //    Items[i].Quality = Items[i].Quality + 1;
+
+        //    if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
+        //    {
+        //        if (Items[i].SellIn < 11)
+        //        {
+        //            if (Items[i].Quality < 50)************************************
+        //            {
+        //                Items[i].Quality = Items[i].Quality + 1;
+        //            }
+        //        }
+
+        //        if (Items[i].SellIn < 6)
+        //        {
+        //            if (Items[i].Quality < 50)************************************
+        //            {
+        //                Items[i].Quality = Items[i].Quality + 1;
+        //            }
+        //        }
+        //    }
+        //}
+        [Test]
+        public void TestThatQualityOfABackStagePassItemIncreasesBy3WhenSellInDaysIsLessThan5CornerCasesWhenQualityIs47()
+        {
+            var item = CreateBackStagePass();
+            item.SellIn = 4;
+            item.Quality = 47;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
+            Assert.AreEqual(50, item.Quality, "Quality of a backstage pass did not increase by 3 when sell in days is less than 5.");
+        }
     }
 }
