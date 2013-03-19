@@ -1,10 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GildedRose.Console
 {
-    class Program
+    public class Program
     {
+        public Program(IList<Item> items)
+        {
+            Items = items;
+        }
+
+        public Program()
+        {
+
+        }
+
         IList<Item> Items;
+        public Item FindItemByName(string name)
+        {
+            if (Items != null)
+            {
+                return Items.FirstOrDefault(i => i.Name.Equals(name));
+            }
+            return null;
+        }
+
         static void Main(string[] args)
         {
             System.Console.WriteLine("OMGHAI!");

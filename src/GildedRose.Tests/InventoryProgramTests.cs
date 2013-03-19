@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using NUnit.Framework;
+using GildedRose.Console;
 
 namespace GildedRose.Tests
 {
@@ -46,9 +48,36 @@ namespace GildedRose.Tests
     public class InventoryProgramTests
     {
         [Test]
-        public void TestTheTruth()
+        public void TestWeCanFindItemByName()
         {
-            Assert.IsTrue(true);
+            var inventoryProgram = new Program(new List<Item> { new Item { Name = "Item1" }, new Item { Name = "Item2" } });
+            var item = inventoryProgram.FindItemByName("Item2");
+            Assert.IsNotNull(item);
+            Assert.AreEqual("Item2", item.Name);
+        }
+
+        [Test]
+        public void TestWeCanFindItemByNameReturnsNullWhenThereIsNoMatch()
+        {
+            var inventoryProgram = new Program(new List<Item> { new Item { Name = "Item1" }, new Item { Name = "Item2" } });
+            var item = inventoryProgram.FindItemByName("NonExistentItem");
+            Assert.IsNull(item);            
+        }
+
+        [Test]
+        public void TestWeCanFindItemByNameReturnsNullWhenThereAreNoItems()
+        {
+            var inventoryProgram = new Program();
+            var item = inventoryProgram.FindItemByName("NonExistentItem");
+            Assert.IsNull(item);
+        }
+
+        [Test]
+        public void TestThatSellInDaysIsReduced()
+        {
+            var program = new Program(new List<Item> { new Item { Name = "+5 Dexterity Vest", SellIn = 1 } });
+            program.UpdateQuality();
+
         }
     }
 }
