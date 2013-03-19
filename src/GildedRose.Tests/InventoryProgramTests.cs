@@ -47,6 +47,9 @@ namespace GildedRose.Tests
     [TestFixture]
     public class InventoryProgramTests
     {
+        private readonly string SulfurasItemName = "Sulfuras, Hand of Ragnaros";
+        private readonly string BrieItemName = "Aged Brie";
+
         private Item CreateItem1()
         {
             return new Item { Name = "Item1", SellIn = 1, Quality = 1 };
@@ -57,7 +60,11 @@ namespace GildedRose.Tests
         }
         private Item CreateSulfuras()
         {
-            return new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 1, Quality = 1 };
+            return new Item { Name = SulfurasItemName, SellIn = 1, Quality = 1 };
+        }
+        private Item CreateBrie()
+        {
+            return new Item { Name = BrieItemName, SellIn = 1, Quality = 1 };
         }
 
         [Test]
@@ -104,8 +111,8 @@ namespace GildedRose.Tests
         [Test]
         public void TestThatSellInDaysIsNotLoweredForSulfuras()
         {
-            var item = UpdateQualityReturnItem(new List<Item> { CreateSulfuras() }, "Sulfuras, Hand of Ragnaros");
-            Assert.AreEqual(1, item.SellIn, "SellIn days was lowered for 'Sulfuras, Hand of Ragnaros'.");
+            var item = UpdateQualityReturnItem(new List<Item> { CreateSulfuras() }, SulfurasItemName);
+            Assert.AreEqual(1, item.SellIn, string.Format("SellIn days was lowered for '{0}'.", SulfurasItemName));
         }
 
         // - At the end of each day our system lowers both (Quality, SellIn) values for every item
@@ -120,8 +127,8 @@ namespace GildedRose.Tests
         [Test]
         public void TestThatQualityIsNotLoweredForSulfuras()
         {
-            var item = UpdateQualityReturnItem(new List<Item> { CreateSulfuras() }, "Sulfuras, Hand of Ragnaros");
-            Assert.AreEqual(1, item.Quality, "Quality was lowered for 'Sulfuras, Hand of Ragnaros'.");
+            var item = UpdateQualityReturnItem(new List<Item> { CreateSulfuras() }, SulfurasItemName);
+            Assert.AreEqual(1, item.Quality, string.Format("Quality days was lowered for '{0}'.", SulfurasItemName));
         }
 
         // - The Quality of an item is never negative
@@ -141,6 +148,14 @@ namespace GildedRose.Tests
             item.Quality = 2;
             item = UpdateQualityReturnItem(new List<Item> { item }, "Item1");
             Assert.AreEqual(0, item.Quality, "Quality did not reduce at twice rate for an item past its sell by date.");
+        }
+
+        // - "Aged Brie" actually increases in Quality the older it gets
+        [Test]
+        public void TestThatAgedBrieIncreasesInQuality()
+        {
+            var item = UpdateQualityReturnItem(new List<Item> { CreateBrie() }, BrieItemName);
+            Assert.AreEqual(2, item.Quality, "Quality was not increased for Brie.");
         }
     }
 }
