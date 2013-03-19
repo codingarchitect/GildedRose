@@ -162,6 +162,18 @@ namespace GildedRose.Tests
             Assert.AreEqual(2, item.Quality, "Quality was not increased for Brie.");
         }
 
+        // - Once the sell by date has passed, Quality degrades twice as fast
+        // - "Aged Brie" actually increases in Quality the older it gets
+        // - Combining both "Aged Brie" past the sell by date increases in value twice as fast.
+        [Test]
+        public void TestThatAgedBrieIncreasesInQualityAtTwiceTheRateWhenSellByDateIsPassed()
+        {
+            var item = CreateBrie();
+            item.SellIn = 0;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BrieItemName);
+            Assert.AreEqual(3, item.Quality, "Quality did not increase at twice rate for an 'Aged Brie' past its sell by date.");
+        }
+
         // - The Quality of an item is never more than 50
         [Test]
         public void TestThatQualityOfAnItemIsNeverMoreThan50()
