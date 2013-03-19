@@ -58,14 +58,14 @@ namespace GildedRose.Console
         {
             foreach(var item in Items)
             {
-                if (item.Name == "Sulfuras, Hand of Ragnaros")
+                if (IsLegendaryItem(item))
                 {
                     continue;
                 }
 
                 item.SellIn = item.SellIn - 1;
 
-                if (item.Name == "Aged Brie" || item.Name == "Backstage passes to a TAFKAL80ETC concert")
+                if (IsImprovingQualityItem(item))
                 {
                     IncrementQuality(item);
                     if (item.SellIn < 0)
@@ -92,12 +92,32 @@ namespace GildedRose.Console
                     }
                     continue;                    
                 }
-                DecrementQuality(item);
-                if (item.SellIn < 0)
+
+                if (IsPerishableQualityItem(item))
                 {
                     DecrementQuality(item);
-                }                
+                    if (item.SellIn < 0)
+                    {
+                        DecrementQuality(item);
+                    }
+                    continue;
+                }
             }
+        }
+
+        private static bool IsLegendaryItem(Item item)
+        {
+            return item.Name == "Sulfuras, Hand of Ragnaros";
+        }
+
+        private static bool IsImprovingQualityItem(Item item)
+        {
+            return item.Name == "Aged Brie" || item.Name == "Backstage passes to a TAFKAL80ETC concert";
+        }
+
+        private static bool IsPerishableQualityItem(Item item)
+        {
+            return !IsImprovingQualityItem(item);
         }
 
         private static void IncrementQuality(Item item)
@@ -121,5 +141,4 @@ namespace GildedRose.Console
 
         public int Quality { get; set; }
     }
-
 }
