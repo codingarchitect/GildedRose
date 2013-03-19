@@ -72,29 +72,21 @@ namespace GildedRose.Console
                 }
                 else
                 {
-                    if (item.Quality < 50)
+                    IncrementQuality(item);
+
+                    if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
                     {
-                        item.Quality = item.Quality + 1;
-
-                        if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
+                        if (item.SellIn < 11)
                         {
-                            if (item.SellIn < 11)
-                            {
-                                if (item.Quality < 50)
-                                {
-                                    item.Quality = item.Quality + 1;
-                                }
-                            }
+                            IncrementQuality(item);                            
+                        }
 
-                            if (item.SellIn < 6)
-                            {
-                                if (item.Quality < 50)
-                                {
-                                    item.Quality = item.Quality + 1;
-                                }
-                            }
+                        if (item.SellIn < 6)
+                        {
+                            IncrementQuality(item);                            
                         }
                     }
+                    
                 }
 
                 item.SellIn = item.SellIn - 1;
@@ -117,14 +109,17 @@ namespace GildedRose.Console
                     }
                     else
                     {
-                        if (item.Quality < 50)
-                        {
-                            item.Quality = item.Quality + 1;
-                        }
+                        IncrementQuality(item);                        
                     }
                 }
             }
-        }        
+        }
+
+        private static void IncrementQuality(Item item)
+        {
+            if (item.Quality < 50)
+                item.Quality++;
+        }
     }
 
     public class Item
