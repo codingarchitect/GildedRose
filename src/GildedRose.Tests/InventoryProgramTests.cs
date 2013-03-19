@@ -49,7 +49,7 @@ namespace GildedRose.Tests
     {
         private readonly string SulfurasItemName = "Sulfuras, Hand of Ragnaros";
         private readonly string BrieItemName = "Aged Brie";
-
+        private readonly string BackStagePassItemName = "Backstage passes to a TAFKAL80ETC concert";
         private Item CreateItem1()
         {
             return new Item { Name = "Item1", SellIn = 1, Quality = 1 };
@@ -65,6 +65,10 @@ namespace GildedRose.Tests
         private Item CreateBrie()
         {
             return new Item { Name = BrieItemName, SellIn = 1, Quality = 1 };
+        }
+        private Item CreateBackStagePass()
+        {
+            return new Item { Name = BackStagePassItemName, Quality = 1, SellIn = 15 };
         }
 
         [Test]
@@ -165,6 +169,14 @@ namespace GildedRose.Tests
             item.Quality = 50;
             item = UpdateQualityReturnItem(new List<Item> { item }, BrieItemName);
             Assert.AreEqual(50, item.Quality, "Quality of an item increased beyond 50.");
+        }
+
+        // - The Quality of a backstage pass increases by 1 when sell in days is more than 10
+        public void TestThatQualityOfABackStagePassItemIncreasesBy1WhenSellInDaysIsMoreThan10()
+        {
+            var item = CreateBackStagePass();
+            item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
+            Assert.AreEqual(16, item.Quality, "Quality of a backstage pass did not increase by 1 when sell in days is more than 10.");
         }
     }
 }
