@@ -65,15 +65,7 @@ namespace GildedRose.Console
 
                 item.SellIn = item.SellIn - 1;
 
-                if (item.Name != "Aged Brie" && item.Name != "Backstage passes to a TAFKAL80ETC concert")
-                {
-                    DecrementQuality(item);
-                    if (item.SellIn < 0)
-                    {
-                        DecrementQuality(item);
-                    }
-                }
-                else
+                if (item.Name == "Aged Brie" || item.Name == "Backstage passes to a TAFKAL80ETC concert")
                 {
                     IncrementQuality(item);
                     if (item.SellIn < 0)
@@ -85,12 +77,12 @@ namespace GildedRose.Console
                     {
                         if (item.SellIn < 11)
                         {
-                            IncrementQuality(item);                            
+                            IncrementQuality(item);
                         }
 
                         if (item.SellIn < 6)
                         {
-                            IncrementQuality(item);                            
+                            IncrementQuality(item);
                         }
 
                         if (item.SellIn < 0)
@@ -98,7 +90,13 @@ namespace GildedRose.Console
                             item.Quality = 0;
                         }
                     }
+                    continue;                    
                 }
+                DecrementQuality(item);
+                if (item.SellIn < 0)
+                {
+                    DecrementQuality(item);
+                }                
             }
         }
 
