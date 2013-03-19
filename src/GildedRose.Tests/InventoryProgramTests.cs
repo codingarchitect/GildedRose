@@ -50,6 +50,8 @@ namespace GildedRose.Tests
         private readonly string SulfurasItemName = "Sulfuras, Hand of Ragnaros";
         private readonly string BrieItemName = "Aged Brie";
         private readonly string BackStagePassItemName = "Backstage passes to a TAFKAL80ETC concert";
+        private readonly string ConjuredManaCakeItemName = "Conjured Mana Cake";
+
         private Item CreateItem1()
         {
             return new Item { Name = "Item1", SellIn = 1, Quality = 1 };
@@ -69,6 +71,10 @@ namespace GildedRose.Tests
         private Item CreateBackStagePass()
         {
             return new Item { Name = BackStagePassItemName, Quality = 1, SellIn = 15 };
+        }
+        private Item CreateConjuredItem()
+        {
+            return new Item { Name = ConjuredManaCakeItemName, SellIn = 3, Quality = 6 };
         }
 
         [Test]
@@ -152,6 +158,15 @@ namespace GildedRose.Tests
             item.Quality = 2;
             item = UpdateQualityReturnItem(new List<Item> { item }, "Item1");
             Assert.AreEqual(0, item.Quality, "Quality did not reduce at twice rate for an item past its sell by date.");
+        }
+
+        // - At the end of each day our system lowers both (Quality, SellIn) values for every item
+        // - "Conjured" items degrade in Quality twice as fast as normal items
+        [Test]
+        public void TestThatQualityIsLoweredBy2ForConjuredItem()
+        {
+            var item = UpdateQualityReturnItem(new List<Item> { CreateConjuredItem() }, ConjuredManaCakeItemName);
+            Assert.AreEqual(4, item.Quality, "Quality was not lowered by 2 for conjured item.");
         }
 
         // - "Aged Brie" actually increases in Quality the older it gets

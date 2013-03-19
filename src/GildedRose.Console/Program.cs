@@ -29,7 +29,8 @@ namespace GildedRose.Console
         {
             { "Aged Brie", new ImprovingQualityItemInventoryUpdateStrategy() },
             { "Sulfuras, Hand of Ragnaros", new LegendaryItemInventoryUpdateStrategy() },
-            { "Backstage passes to a TAFKAL80ETC concert", new BackStagePassItemInventoryUpdateStrategy() }            
+            { "Backstage passes to a TAFKAL80ETC concert", new BackStagePassItemInventoryUpdateStrategy() },
+            { "Conjured Mana Cake", new ConjuredItemInventoryUpdateStrategy() }        
         };
 
         static void Main(string[] args)
@@ -97,12 +98,12 @@ namespace GildedRose.Console
                 AdjustQuality(item);
         }
 
-        public virtual void AdjustSellInDays(Item item)
+        protected virtual void AdjustSellInDays(Item item)
         {
             item.SellIn--;
         }
 
-        public virtual void AdjustQuality(Item item) { }
+        protected virtual void AdjustQuality(Item item) { }
     }
 
     public class LegendaryItemInventoryUpdateStrategy : DefaultInventoryUpdateStrategy
@@ -115,21 +116,30 @@ namespace GildedRose.Console
 
     public class PerishableQualityItemInventoryUpdateStrategy : DefaultInventoryUpdateStrategy
     {
-        public override void AdjustQuality(Item item)
+        protected override void AdjustQuality(Item item)
         {
             DecrementQuality(item);
         }
 
-        private static void DecrementQuality(Item item)
+        protected static void  DecrementQuality(Item item)
         {
             if (item.Quality > 0)
                 item.Quality--;
         }
     }
 
+    public class ConjuredItemInventoryUpdateStrategy : PerishableQualityItemInventoryUpdateStrategy
+    {
+        protected override void AdjustQuality(Item item)
+        {
+            DecrementQuality(item);
+            DecrementQuality(item);
+        }
+    }
+
     public class ImprovingQualityItemInventoryUpdateStrategy : DefaultInventoryUpdateStrategy
     {
-        public override void AdjustQuality(Item item)
+        protected override void AdjustQuality(Item item)
         {
             IncrementQuality(item);
         }
