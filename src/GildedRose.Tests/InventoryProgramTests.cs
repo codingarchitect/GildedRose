@@ -49,7 +49,7 @@ namespace GildedRose.Tests
     {
         private Item CreateItem1()
         {
-            return new Item { Name = "Item1", SellIn = 1 };
+            return new Item { Name = "Item1", SellIn = 1, Quality = 1 };
         }
         private Item CreateItem2()
         {
@@ -92,6 +92,7 @@ namespace GildedRose.Tests
             return inventoryProgram.FindItemByName(itemName);
         }
 
+        // - At the end of each day our system lowers both (Quality, SellIn) values for every item
         [Test]
         public void TestThatSellInDaysIsLoweredWhenItemNameIsNotSulfuras()
         {
@@ -99,6 +100,7 @@ namespace GildedRose.Tests
             Assert.AreEqual(0, item.SellIn, "SellIn days was not lowered.");
         }
 
+        // - "Sulfuras", being a legendary item, never has to be sold or decreases in Quality
         [Test]
         public void TestThatSellInDaysIsNotLoweredForSulfuras()
         {
@@ -106,6 +108,7 @@ namespace GildedRose.Tests
             Assert.AreEqual(1, item.SellIn, "SellIn days was lowered for 'Sulfuras, Hand of Ragnaros'.");
         }
 
+        // - At the end of each day our system lowers both (Quality, SellIn) values for every item
         [Test]
         public void TestThatQualityIsLoweredForNormalCase()
         {
@@ -113,11 +116,20 @@ namespace GildedRose.Tests
             Assert.AreEqual(0, item.Quality, "Quality was not lowered for normal case.");
         }
 
+        // - "Sulfuras", being a legendary item, never has to be sold or decreases in Quality
         [Test]
         public void TestThatQualityIsNotLoweredForSulfuras()
         {
             var item = UpdateQualityReturnItem(new List<Item> { CreateSulfuras() }, "Sulfuras, Hand of Ragnaros");
             Assert.AreEqual(1, item.Quality, "Quality was lowered for 'Sulfuras, Hand of Ragnaros'.");
+        }
+
+        // - The Quality of an item is never negative
+        [Test]
+        public void TestThatQualityIsNeverNegative()
+        {
+            var item = UpdateQualityReturnItem(new List<Item> { CreateItem2() }, "Item2");
+            Assert.AreEqual(0, item.Quality, "Quality is negative.");
         }
     }
 }
