@@ -63,13 +63,23 @@ namespace GildedRose.Console
                     continue;
                 }
 
+                item.SellIn = item.SellIn - 1;
+
                 if (item.Name != "Aged Brie" && item.Name != "Backstage passes to a TAFKAL80ETC concert")
                 {
-                    DecrementQuality(item);                                            
+                    DecrementQuality(item);
+                    if (item.SellIn < 0)
+                    {
+                        DecrementQuality(item);
+                    }
                 }
                 else
                 {
                     IncrementQuality(item);
+                    if (item.SellIn < 0)
+                    {
+                        IncrementQuality(item);
+                    }
 
                     if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
                     {
@@ -82,27 +92,10 @@ namespace GildedRose.Console
                         {
                             IncrementQuality(item);                            
                         }
-                    }
-                    
-                }
 
-                item.SellIn = item.SellIn - 1;
-                
-                if (item.SellIn < 0)
-                {
-                    if (item.Name != "Aged Brie" && item.Name != "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        DecrementQuality(item);                        
-                    }
-                    else
-                    {
-                        IncrementQuality(item);
-                        if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
+                        if (item.SellIn < 0)
                         {
-                            if (item.SellIn < 0)
-                            {
-                                item.Quality = 0;
-                            }                           
+                            item.Quality = 0;
                         }
                     }
                 }
