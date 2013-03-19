@@ -131,5 +131,16 @@ namespace GildedRose.Tests
             var item = UpdateQualityReturnItem(new List<Item> { CreateItem2() }, "Item2");
             Assert.AreEqual(0, item.Quality, "Quality is negative.");
         }
+
+        // - Once the sell by date has passed, Quality degrades twice as fast
+        [Test]
+        public void TestThatQualityIsLoweredAtTwiceTheRateWhenSellByDateIsPassed()
+        {
+            var item = CreateItem1();
+            item.SellIn = 0;
+            item.Quality = 2;
+            item = UpdateQualityReturnItem(new List<Item> { item }, "Item1");
+            Assert.AreEqual(0, item.Quality, "Quality did not reduce at twice rate for an item past its sell by date.");
+        }
     }
 }
