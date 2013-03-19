@@ -90,20 +90,20 @@ namespace GildedRose.Console
                 
                 if (item.SellIn < 0)
                 {
-                    if (item.Name != "Aged Brie")
+                    if (item.Name != "Aged Brie" && item.Name != "Backstage passes to a TAFKAL80ETC concert")
                     {
-                        if (item.Name != "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            DecrementQuality(item);                                                            
-                        }
-                        else
-                        {
-                            item.Quality = 0;
-                        }
+                        DecrementQuality(item);                        
                     }
                     else
                     {
-                        IncrementQuality(item);                        
+                        IncrementQuality(item);
+                        if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
+                        {
+                            if (item.SellIn < 0)
+                            {
+                                item.Quality = 0;
+                            }                           
+                        }
                     }
                 }
             }
