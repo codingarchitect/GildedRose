@@ -171,12 +171,62 @@ namespace GildedRose.Tests
             Assert.AreEqual(50, item.Quality, "Quality of an item increased beyond 50.");
         }
 
-        // - The Quality of a backstage pass increases by 1 when sell in days is more than 10
+        // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches; 
         public void TestThatQualityOfABackStagePassItemIncreasesBy1WhenSellInDaysIsMoreThan10()
         {
             var item = CreateBackStagePass();
             item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
             Assert.AreEqual(16, item.Quality, "Quality of a backstage pass did not increase by 1 when sell in days is more than 10.");
+        }
+
+        // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches; 
+        // Quality increases by 2 when there are *10 days* or less
+        public void TestThatQualityOfABackStagePassItemIncreasesBy2WhenSellInDays10()
+        {
+            var item = CreateBackStagePass();
+            item.SellIn = 10;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
+            Assert.AreEqual(17, item.Quality, "Quality of a backstage pass did not increase by 2 when sell in days is 10.");
+        }
+
+        // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches; 
+        // Quality increases by 2 when there are 10 days or *less*
+        public void TestThatQualityOfABackStagePassItemIncreasesBy2WhenSellInDaysIsLessThan10()
+        {
+            var item = CreateBackStagePass();
+            item.SellIn = 9;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
+            Assert.AreEqual(17, item.Quality, "Quality of a backstage pass did not increase by 2 when sell in days is less than 10.");
+        }
+
+        // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches; 
+        // and by 3 when there are *5 days* or less 
+        public void TestThatQualityOfABackStagePassItemIncreasesBy3WhenSellInDaysIs5()
+        {
+            var item = CreateBackStagePass();
+            item.SellIn = 5;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
+            Assert.AreEqual(18, item.Quality, "Quality of a backstage pass did not increase by 3 when sell in days is 5.");
+        }
+
+        // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches; 
+        // and by 3 when there are 5 days or *less*
+        public void TestThatQualityOfABackStagePassItemIncreasesBy3WhenSellInDaysIsLessThan5()
+        {
+            var item = CreateBackStagePass();
+            item.SellIn = 4;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
+            Assert.AreEqual(18, item.Quality, "Quality of a backstage pass did not increase by 3 when sell in days is less than 5.");
+        }
+
+        // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches; 
+        // but Quality drops to 0 after the concert
+        public void TestThatQualityOfABackStagePassItemDropsTo0AfterTheConcert()
+        {
+            var item = CreateBackStagePass();
+            item.SellIn = 0;
+            item = UpdateQualityReturnItem(new List<Item> { item }, BackStagePassItemName);
+            Assert.AreEqual(0, item.Quality, "Quality of a backstage pass did not drop to 0 after the concert.");
         }
     }
 }
