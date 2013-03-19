@@ -47,10 +47,14 @@ namespace GildedRose.Tests
     [TestFixture]
     public class InventoryProgramTests
     {
+        private readonly Item Item1 = new Item { Name = "Item1", SellIn = 1 };
+        private readonly Item Item2 = new Item { Name = "Item2", SellIn = 1 };
+        private readonly Item Sulfuras = new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 1 };
+
         [Test]
         public void TestWeCanFindItemByName()
         {
-            var inventoryProgram = new Program(new List<Item> { new Item { Name = "Item1" }, new Item { Name = "Item2" } });
+            var inventoryProgram = new Program(new List<Item> { Item1, Item2 });
             var item = inventoryProgram.FindItemByName("Item2");
             Assert.IsNotNull(item);
             Assert.AreEqual("Item2", item.Name);
@@ -59,7 +63,7 @@ namespace GildedRose.Tests
         [Test]
         public void TestWeCanFindItemByNameReturnsNullWhenThereIsNoMatch()
         {
-            var inventoryProgram = new Program(new List<Item> { new Item { Name = "Item1" }, new Item { Name = "Item2" } });
+            var inventoryProgram = new Program(new List<Item> { Item1, Item2 });
             var item = inventoryProgram.FindItemByName("NonExistentItem");
             Assert.IsNull(item);            
         }
@@ -75,7 +79,7 @@ namespace GildedRose.Tests
         [Test]
         public void TestThatSellInDaysIsReducedWhenItemNameIsNotSulfuras()
         {
-            var inventoryProgram = new Program(new List<Item> { new Item { Name = "Item1", SellIn = 1 } });
+            var inventoryProgram = new Program(new List<Item> { Item1 });
             inventoryProgram.UpdateQuality();
             var item1 = inventoryProgram.FindItemByName("Item1");
             Assert.AreEqual(0, item1.SellIn, "SellIn days was not reduced.");
@@ -84,10 +88,9 @@ namespace GildedRose.Tests
         [Test]
         public void TestThatSellInDaysIsNotReducedForSulfuras()
         {
-            var sulfuras = new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 1 };
-            var inventoryProgram = new Program(new List<Item> { sulfuras });
+            var inventoryProgram = new Program(new List<Item> { Sulfuras });
             inventoryProgram.UpdateQuality();
-            var item = inventoryProgram.FindItemByName(sulfuras.Name);
+            var item = inventoryProgram.FindItemByName(Sulfuras.Name);
             Assert.AreEqual(1, item.SellIn, "SellIn days was reduced for 'Sulfuras, Hand of Ragnaros'.");
         }
     }
