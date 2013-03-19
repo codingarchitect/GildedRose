@@ -25,6 +25,13 @@ namespace GildedRose.Console
             return null;
         }
 
+        private static IDictionary<string, IInventoryUpdateStrategy> InventoryUpdateStrategyMap = new Dictionary<string, IInventoryUpdateStrategy>
+        {
+            { "Aged Brie", new ImprovingQualityItemInventoryUpdateStrategy() },
+            { "Sulfuras, Hand of Ragnaros", new LegendaryItemInventoryUpdateStrategy() },
+            { "Backstage passes to a TAFKAL80ETC concert", new BackStagePassItemInventoryUpdateStrategy() }            
+        };
+
         static void Main(string[] args)
         {
             System.Console.WriteLine("OMGHAI!");
@@ -56,81 +63,14 @@ namespace GildedRose.Console
 
         public void UpdateQuality()
         {
-            foreach(var item in Items)
+            foreach (var item in Items)
             {
-                if (IsLegendaryItem(item))
-                {
-                    continue;
-                }
-
-                item.SellIn = item.SellIn - 1;
-
-                if (IsImprovingQualityItem(item))
-                {
-                    IncrementQuality(item);
-                    if (item.SellIn < 0)
-                    {
-                        IncrementQuality(item);
-                    }
-
-                    if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        if (item.SellIn < 11)
-                        {
-                            IncrementQuality(item);
-                        }
-
-                        if (item.SellIn < 6)
-                        {
-                            IncrementQuality(item);
-                        }
-
-                        if (item.SellIn < 0)
-                        {
-                            item.Quality = 0;
-                        }
-                    }
-                    continue;                    
-                }
-
-                if (IsPerishableQualityItem(item))
-                {
-                    DecrementQuality(item);
-                    if (item.SellIn < 0)
-                    {
-                        DecrementQuality(item);
-                    }
-                    continue;
-                }
+                IInventoryUpdateStrategy inventoryUpdateStrategy = new PerishableQualityItemInventoryUpdateStrategy();
+                if (InventoryUpdateStrategyMap.ContainsKey(item.Name))
+                    inventoryUpdateStrategy = InventoryUpdateStrategyMap[item.Name];
+                inventoryUpdateStrategy.UpdateInventory(item);
             }
-        }
-
-        private static bool IsLegendaryItem(Item item)
-        {
-            return item.Name == "Sulfuras, Hand of Ragnaros";
-        }
-
-        private static bool IsImprovingQualityItem(Item item)
-        {
-            return item.Name == "Aged Brie" || item.Name == "Backstage passes to a TAFKAL80ETC concert";
-        }
-
-        private static bool IsPerishableQualityItem(Item item)
-        {
-            return !IsImprovingQualityItem(item);
-        }
-
-        private static void IncrementQuality(Item item)
-        {
-            if (item.Quality < 50)
-                item.Quality++;
-        }
-
-        private static void DecrementQuality(Item item)
-        {
-            if (item.Quality > 0)
-                item.Quality--;
-        }
+        }        
     }
 
     public class Item
@@ -140,5 +80,84 @@ namespace GildedRose.Console
         public int SellIn { get; set; }
 
         public int Quality { get; set; }
+    }
+
+    public interface IInventoryUpdateStrategy
+    {
+        void UpdateInventory(Item item);
+    }
+
+    public abstract class DefaultInventoryUpdateStrategy : IInventoryUpdateStrategy
+    {
+        public virtual void UpdateInventory(Item item)
+        {
+            AdjustSellInDays(item);
+            AdjustQuality(item);
+            if (item.SellIn < 0)
+                AdjustQuality(item);
+        }
+
+        public virtual void AdjustSellInDays(Item item)
+        {
+            item.SellIn--;
+        }
+
+        public virtual void AdjustQuality(Item item) { }
+    }
+
+    public class LegendaryItemInventoryUpdateStrategy : DefaultInventoryUpdateStrategy
+    {
+        public override void UpdateInventory(Item item)
+        {
+            
+        }
+    }
+
+    public class PerishableQualityItemInventoryUpdateStrategy : DefaultInventoryUpdateStrategy
+    {
+        public override void AdjustQuality(Item item)
+        {
+            DecrementQuality(item);
+        }
+
+        private static void DecrementQuality(Item item)
+        {
+            if (item.Quality > 0)
+                item.Quality--;
+        }
+    }
+
+    public class ImprovingQualityItemInventoryUpdateStrategy : DefaultInventoryUpdateStrategy
+    {
+        public override void AdjustQuality(Item item)
+        {
+            IncrementQuality(item);
+        }
+
+        private static void IncrementQuality(Item item)
+        {
+            if (item.Quality < 50)
+                item.Quality++;
+        }
+    }
+
+    public class BackStagePassItemInventoryUpdateStrategy : ImprovingQualityItemInventoryUpdateStrategy
+    {
+        public override void UpdateInventory(Item item)
+        {
+            base.UpdateInventory(item);
+            if (item.SellIn < 11)
+            {
+                AdjustQuality(item);
+            }
+            if (item.SellIn < 6)
+            {
+                AdjustQuality(item);
+            }
+            if (item.SellIn < 0)
+            {
+                item.Quality = 0;
+            }
+        }
     }
 }
